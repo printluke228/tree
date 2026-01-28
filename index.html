@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tree 的网站</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f5f5f5;
+            font-family: "Microsoft YaHei", sans-serif;
+            color: #333;
+            padding: 20px;
+        }
+        /* 主标题样式 */
+        .main-title {
+            font-size: 36px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        /* 多段内容容器 */
+        .content-box {
+            max-width: 600px;
+            text-align: center;
+            line-height: 1.8;
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 40px;
+        }
+        .content-box p {
+            margin-bottom: 15px;
+        }
+        /* 无用装饰按钮组 */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 50px;
+        }
+        .useless-btn {
+            padding: 10px 20px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            background-color: #ffffff;
+            color: #4a5568;
+            font-size: 14px;
+            cursor: default; /* 鼠标移上无点击样式，强调无用 */
+            transition: all 0.2s;
+        }
+        /* 鼠标移上轻微样式变化，仅做装饰 */
+        .useless-btn:hover {
+            background-color: #f8f9fa;
+            border-color: #adb5bd;
+        }
+        /* 版权声明 - 固定底部 */
+        .copyright {
+            position: fixed;
+            bottom: 30px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- 主标题 -->
+    <div class="main-title">这是 tree 的网站</div>
+
+    <!-- 新增多段填充内容 -->
+    <div class="content-box">
+        <p>这是为网站添加的填充内容，仅做页面展示使用～</p>
+        <p>没有实际的功能意义，只是让页面内容更丰富，不会显得单调。</p>
+        <p>后续可以根据需要，替换成自己想展示的文字、介绍等内容。</p>
+    </div>
+
+    <!-- 新增一组无用装饰按钮（点击无任何效果） -->
+    <div class="btn-group">
+        <button class="useless-btn">按钮一</button>
+        <button class="useless-btn">按钮二</button>
+        <button class="useless-btn">功能按钮</button>
+        <button class="useless-btn">更多选项</button>
+        <button class="useless-btn">点击试试</button>
+    </div>
+
+    <!-- 版权声明 -->
+    <div class="copyright">© 2026 tree 版权所有</div>
+</body>
+</html>
