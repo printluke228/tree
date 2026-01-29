@@ -21,14 +21,38 @@
             color: #333;
             padding: 20px;
         }
-        /* 主标题样式 */
         .main-title {
             font-size: 36px;
             margin-bottom: 30px;
             font-weight: 600;
             color: #2d3748;
         }
-        /* 多段内容容器 */
+        .time {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .time .time {
+            font-size: 42px;
+            font-weight: bold;
+            color: #2d3748;
+            letter-spacing: 2px;
+            margin: 0 0 8px 0;
+        }
+        .time p {
+            font-size: 14px;
+            color: #4a5568;
+            line-height: 1.5;
+            margin: 0 0 6px 0;
+        }
+        .time_a {
+            font-size: 14px;
+            color: #2b6cb0;
+            text-decoration: none;
+        }
+        .time_a:hover {
+            text-decoration: underline;
+            color: #2c5282;
+        }
         .content-box {
             max-width: 600px;
             text-align: center;
@@ -40,7 +64,6 @@
         .content-box p {
             margin-bottom: 15px;
         }
-        /* 无用装饰按钮组 */
         .btn-group {
             display: flex;
             gap: 15px;
@@ -55,15 +78,13 @@
             background-color: #ffffff;
             color: #4a5568;
             font-size: 14px;
-            cursor: default; /* 鼠标移上无点击样式，强调无用 */
+            cursor: default;
             transition: all 0.2s;
         }
-        /* 鼠标移上轻微样式变化，仅做装饰 */
         .useless-btn:hover {
             background-color: #f8f9fa;
             border-color: #adb5bd;
         }
-        /* 版权声明 - 固定底部 */
         .copyright {
             position: fixed;
             bottom: 30px;
@@ -73,26 +94,42 @@
     </style>
 </head>
 <body>
-    <!-- 主标题 -->
     <div class="main-title">这是 tree 的网站</div>
 
-    <!-- 新增多段填充内容 -->
+    <div class="time">
+        <p class="time"></p>
+        <p>更多时间信息前往</p>
+        <a href="https://time.is" class="time_a">time.is</a>
+    </div>
+
     <div class="content-box">
-        <p>这是为网站添加的填充内容，仅做页面展示使用～</p>
         <p>没有实际的功能意义，只是让页面内容更丰富，不会显得单调。</p>
         <p>后续可以根据需要，替换成自己想展示的文字、介绍等内容。</p>
     </div>
 
-    <!-- 新增一组无用装饰按钮（点击无任何效果） -->
     <div class="btn-group">
-        <button class="useless-btn">按钮一</button>
+        <button class="useless-btn" id="btn1">bilibili</button>
         <button class="useless-btn">按钮二</button>
         <button class="useless-btn">功能按钮</button>
         <button class="useless-btn">更多选项</button>
         <button class="useless-btn">点击试试</button>
     </div>
 
-    <!-- 版权声明 -->
     <div class="copyright">© 2026 tree 版权所有</div>
+
+    <script>
+        const clock = document.querySelector('.time .time');
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours().toString().padStart(2, '0');
+            let minutes = now.getMinutes().toString().padStart(2, '0');
+            let seconds = now.getSeconds().toString().padStart(2, '0');
+            const timeStr = `${hours}:${minutes}:${seconds}`;
+            clock.innerText = "现在的时间是:" + timeStr;
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+		document.getElementById('btn1').onclick = () => window.location.href = 'https://space.bilibili.com/1124528023?spm_id_from=333.337.0.0';
+    </script>
 </body>
 </html>
