@@ -453,15 +453,15 @@
             </div>
         </div>
         
-        <div class="flip-btn-wrapper">
+        <div class="video-btn-container" id="videoContainer2">
             <button class="useless-btn btn-front">悬停/点击看视频</button>
             <button class="useless-btn btn-back">《三角洲行动》视频 第二段</button>
-			<div class="video-box">
-			    <video id="hoverVideo" muted preload="metadata">
-			        <source src="s2.mp4" type="video/mp4">
-			        你的浏览器不支持HTML5视频播放
-			    </video>
-			</div>
+        	<div class="video-box">
+        	    <video id="hoverVideo2" muted preload="metadata">
+        	        <source src="s2.mp4" type="video/mp4">
+        	        你的浏览器不支持HTML5视频播放
+        	    </video>
+        	</div>
         </div>
 		<div class="flip-btn-wrapper" id="delt">
 		    <button class="useless-btn btn-front">deltaforce</button>
@@ -497,6 +497,52 @@
                 });
             }
         }
+		// 第二个视频按钮 - 新增代码
+		const container2 = document.getElementById('videoContainer2');
+		const video2 = document.getElementById('hoverVideo2');
+		let isClickActive2 = false;
+		function playVideo2() {
+		    if (video2.paused) {
+		        video2.play().catch(err => {
+		            console.log('第二段视频播放失败：', err);
+		        });
+		    }
+		}
+		function pauseAndResetVideo2() {
+		    if (!video2.paused) {
+		        video2.pause();
+		        video2.currentTime = 0;
+		    }
+		    container2.classList.remove('active');
+		    isClickActive2 = false;
+		}
+		container2.addEventListener('mouseenter', () => {
+		    if (!isClickActive2) {
+		        playVideo2();
+		    }
+		});
+		container2.addEventListener('mouseleave', () => {
+		    if (!isClickActive2) {
+		        pauseAndResetVideo2();
+		    }
+		});
+		container2.addEventListener('click', (e) => {
+		    if (e.target.classList.contains('useless-btn')) {
+		        e.stopPropagation();
+		        isClickActive2 = !isClickActive2;
+		        if (isClickActive2) {
+		            container2.classList.add('active');
+		            playVideo2();
+		        } else {
+		            pauseAndResetVideo2();
+		        }
+		    }
+		});
+		document.addEventListener('click', (e) => {
+		    if (isClickActive2 && !container2.contains(e.target)) {
+		        pauseAndResetVideo2();
+		    }
+		});
         function pauseAndResetVideo() {
             if (!video.paused) {
                 video.pause();
