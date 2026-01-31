@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    with open("main_index.html", 'r', encoding='utf-8') as f:
+    with open("index.html", 'r', encoding='utf-8') as f:
         html_content = f.read()
     return html_content
 
