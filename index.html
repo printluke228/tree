@@ -194,6 +194,16 @@
 				user-select: none;
 				border: none;
 				outline: none;
+				/* 修复点击穿透：让按钮可被点击 */
+				pointer-events: auto;
+			}
+			/* 外层容器点击事件穿透，确保点击到内部按钮 */
+			.flip-btn-wrapper, .video-btn-container {
+				pointer-events: none;
+			}
+			/* 按钮本身恢复点击 */
+			.flip-btn-wrapper .useless-btn, .video-btn-container .useless-btn {
+				pointer-events: auto;
 			}
 
 			.btn-front {
@@ -235,7 +245,7 @@
 			.video-box {
 				position: absolute;
 				bottom: calc(100% + 10px);
-				left: 100%;
+				left: 50%;
 				transform: translate(-50%, 20px);
 				width: 960px;
 				max-width: calc(100vw - 40px);
@@ -484,9 +494,10 @@
 			<p class="nothing"></p>
 		</div>
 		<div class="btn-group">
-			<div class="flip-btn-wrapper" id="btn1">
+			<!-- B站按钮：增加独立id -->
+			<div class="flip-btn-wrapper">
 				<button class="useless-btn btn-front">bilibili</button>
-				<button class="useless-btn btn-back">啥也不是橙子的B站空间</button>
+				<button id="bilibiliBtn" class="useless-btn btn-back">啥也不是橙子的B站空间</button>
 			</div>
 			<div class="video-btn-container" id="videoContainer">
 				<button class="useless-btn btn-front">悬停/点击看视频</button>
@@ -509,24 +520,21 @@
 					</video>
 				</div>
 			</div>
-			<div class="flip-btn-wrapper" id="delt">
+			<div class="flip-btn-wrapper">
 				<button class="useless-btn btn-front">deltaforce</button>
-				<button class="useless-btn btn-back">“三角洲部队”可以购买军火</button>
+				<button id="deltaBtn" class="useless-btn btn-back">“三角洲部队”可以购买军火</button>
 			</div>
 			<div class="flip-btn-wrapper">
 				<button class="useless-btn btn-front">点击下载图片</button>
-				
-		<button onclick="downloadFile('img.zip', 'img.zip')" class="useless-btn btn-back">
-  		二十中学官网上的图片
-		</button>
-		
+				<button onclick="downloadFile('img.zip', 'img.zip')" class="useless-btn btn-back">
+					二十中学官网上的图片
+				</button>
 			</div>
 		</div>
 		<div class="copyright">© 2026 tree 版权所有</div>
 		<script >
 			// 1. 时钟更新功能
 			const clock = document.querySelector('.time .time');
-
 			function updateClock() {
 				const now = new Date();
 				let hours = now.getHours().toString().padStart(2, '0');
@@ -538,21 +546,27 @@
 			updateClock();
 			setInterval(updateClock, 1000);
 
-			// 2. 按钮跳转功能
-			document.getElementById('useless-btn btn-back').onclick = () => window.location.href =
-				'https://space.bilibili.com/1124528023?spm_id_from=333.337.0.0';
-			document.getElementById('delt').onclick = () => window.location.href = 'https://deltaforce.com/';
+			// 2. 修复按钮跳转：绑定正确的元素id
+			// B站跳转按钮
+			document.getElementById('bilibiliBtn').onclick = () => {
+				window.open('https://space.bilibili.com/1124528023?spm_id_from=333.337.0.0', '_blank');
+			};
+			// 三角洲官网跳转按钮
+			document.getElementById('deltaBtn').onclick = () => {
+				window.open('https://deltaforce.com/', '_blank');
+			};
+
+			// 3. 视频交互功能
 			let hasUserInteracted = false;
 			const container = document.getElementById('videoContainer');
 			const video = document.getElementById('hoverVideo');
 			let isClickActive = false;
 
-
 			const container2 = document.getElementById('videoContainer2');
 			const video2 = document.getElementById('hoverVideo2');
 			let isClickActive2 = false;
 
-
+			// 第一个视频播放/暂停
 			function playVideo() {
 				if (video.paused && hasUserInteracted) {
 					video.play().catch(err => {
@@ -560,7 +574,6 @@
 					});
 				}
 			}
-
 			function pauseAndResetVideo() {
 				if (!video.paused) {
 					video.pause();
@@ -570,7 +583,7 @@
 				isClickActive = false;
 			}
 
-			// 第二个视频播放/暂停函数（修正原代码声明顺序问题）
+			// 第二个视频播放/暂停
 			function playVideo2() {
 				if (video2.paused && hasUserInteracted) {
 					video2.play().catch(err => {
@@ -578,7 +591,6 @@
 					});
 				}
 			}
-
 			function pauseAndResetVideo2() {
 				if (!video2.paused) {
 					video2.pause();
@@ -588,82 +600,58 @@
 				isClickActive2 = false;
 			}
 
-			// 4. 关键：获取用户主动交互权限（解决浏览器自动播放限制）
+			// 4. 获取用户主动交互权限（解决浏览器自动播放限制）
 			document.addEventListener('click', () => {
 				if (!hasUserInteracted) {
 					hasUserInteracted = true;
 					console.log('已获得用户交互权限，可播放视频');
 				}
-			}, {
-				once: true
-			}); // 仅执行一次，避免重复绑定
+			}, { once: true });
 
 			// 5. 第一个视频事件绑定
 			container.addEventListener('mouseenter', () => {
-				if (!isClickActive) {
-					playVideo();
-				}
+				if (!isClickActive) playVideo();
 			});
 			container.addEventListener('mouseleave', () => {
-				if (!isClickActive) {
-					pauseAndResetVideo();
-				}
+				if (!isClickActive) pauseAndResetVideo();
 			});
 			container.addEventListener('click', (e) => {
 				if (e.target.classList.contains('useless-btn')) {
 					e.stopPropagation();
 					isClickActive = !isClickActive;
-					if (isClickActive) {
-						container.classList.add('active');
-						playVideo();
-					} else {
-						pauseAndResetVideo();
-					}
+					isClickActive ? (container.classList.add('active'), playVideo()) : pauseAndResetVideo();
 				}
 			});
 			document.addEventListener('click', (e) => {
-				if (isClickActive && !container.contains(e.target)) {
-					pauseAndResetVideo();
-				}
+				if (isClickActive && !container.contains(e.target)) pauseAndResetVideo();
 			});
 
 			// 6. 第二个视频事件绑定
 			container2.addEventListener('mouseenter', () => {
-				if (!isClickActive2) {
-					playVideo2();
-				}
+				if (!isClickActive2) playVideo2();
 			});
 			container2.addEventListener('mouseleave', () => {
-				if (!isClickActive2) {
-					pauseAndResetVideo2();
-				}
+				if (!isClickActive2) pauseAndResetVideo2();
 			});
 			container2.addEventListener('click', (e) => {
 				if (e.target.classList.contains('useless-btn')) {
 					e.stopPropagation();
 					isClickActive2 = !isClickActive2;
-					if (isClickActive2) {
-						container2.classList.add('active');
-						playVideo2();
-					} else {
-						pauseAndResetVideo2();
-					}
+					isClickActive2 ? (container2.classList.add('active'), playVideo2()) : pauseAndResetVideo2();
 				}
 			});
 			document.addEventListener('click', (e) => {
-				if (isClickActive2 && !container2.contains(e.target)) {
-					pauseAndResetVideo2();
-				}
+				if (isClickActive2 && !container2.contains(e.target)) pauseAndResetVideo2();
 			});
-			function downloadFile(filePath, fileName) {
-  // 动态创建a标签（隐藏，仅用于触发下载）
-  const link = document.createElement('a');
-  link.href = filePath; // 文件路径（相对/绝对都可）
-  link.download = fileName; // 下载后的自定义文件名
-  link.click(); // 模拟点击a标签，触发浏览器下载
-  link.remove(); // 下载后移除临时创建的a标签
-}
-</script>
-	</body>
 
+			// 7. 下载文件功能
+			function downloadFile(filePath, fileName) {
+				const link = document.createElement('a');
+				link.href = filePath;
+				link.download = fileName;
+				link.click();
+				link.remove();
+			}
+		</script>
+	</body>
 </html>
