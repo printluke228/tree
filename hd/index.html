@@ -48,6 +48,79 @@
             font-weight: bold;
             color: #666;
         }
+        /* 密码强度测试器样式 */
+.password-strength-container {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+.password-strength-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 15px;
+}
+.password-input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+#password-input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+#password-input:focus {
+    border-color: #3b82f6;
+}
+#test-password-btn {
+    padding: 0 20px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+#test-password-btn:hover {
+    background: #2563eb;
+}
+.password-strength-meter {
+    height: 8px;
+    border-radius: 4px;
+    background-color: #e5e7eb;
+    margin: 10px 0;
+    overflow: hidden;
+}
+.strength-bar {
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+/* 不同强度的颜色 */
+.strength-none { background-color: #9ca3af; } /* 无 */
+.strength-very-weak { background-color: #ef4444; } /* 极弱 */
+.strength-weak { background-color: #f97316; } /* 弱 */
+.strength-medium { background-color: #f59e0b; } /* 中 */
+.strength-strong { background-color: #3b82f6; } /* 强 */
+.strength-very-strong { background-color: #10b981; } /* 极强 */
+
+.strength-text {
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+.password-tips {
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.5;
+}
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen font-sans">
@@ -203,7 +276,21 @@
             2. <strong>二次混合</strong> 保证了双方结果一致，因为无论先加 A 还是先加 B，结果颜色（密钥）都相同。
         </div>
     </div>
-
+            <!-- 密码安全强度测试器 -->
+        <div class="password-strength-container">
+            <h3 class="password-strength-title">密码安全强度测试器</h3>
+            <div class="password-input-group">
+                <input type="password" id="password-input" placeholder="请输入要测试的密码...">
+                <button id="test-password-btn">测试强度</button>
+            </div>
+            <div class="password-strength-meter">
+                <div id="strength-bar" class="strength-bar"></div>
+            </div>
+            <div id="strength-text" class="strength-text">请输入密码进行测试</div>
+            <div id="password-tips" class="password-tips">
+                密码长度参考：5位以下=无，10位以下=极弱，15位以下=弱，20位左右=中，40位以上=强，60位以上=极强
+            </div>
+        </div>
     <script>
         let currentStep = 1;
         let publicColor = '#ffd700';
@@ -335,6 +422,82 @@
             updateColors();
             updateBtnState();
         };
+                // 密码强度测试逻辑
+        function calculatePasswordStrength(password) {
+            const length = password.length;
+            // 按长度判断强度
+            if (length < 5) {
+                return {
+                    level: 'none',
+                    text: '无',
+                    width: '0%',
+                    colorClass: 'strength-none'
+                };
+            } else if (length < 10) {
+                return {
+                    level: 'very-weak',
+                    text: '极弱',
+                    width: '15%',
+                    colorClass: 'strength-very-weak'
+                };
+            } else if (length < 15) {
+                return {
+                    level: 'weak',
+                    text: '弱',
+                    width: '30%',
+                    colorClass: 'strength-weak'
+                };
+            } else if (length >= 15 && length < 40) {
+                return {
+                    level: 'medium',
+                    text: '中',
+                    width: '50%',
+                    colorClass: 'strength-medium'
+                };
+            } else if (length >= 40 && length < 60) {
+                return {
+                    level: 'strong',
+                    text: '强',
+                    width: '80%',
+                    colorClass: 'strength-strong'
+                };
+            } else {
+                return {
+                    level: 'very-strong',
+                    text: '极强',
+                    width: '100%',
+                    colorClass: 'strength-very-strong'
+                };
+            }
+        }
+
+        // 渲染密码强度UI
+        function renderStrengthUI(strength) {
+            const strengthBar = document.getElementById('strength-bar');
+            const strengthText = document.getElementById('strength-text');
+            
+            // 重置所有样式类
+            strengthBar.className = 'strength-bar';
+            // 添加对应强度的颜色类
+            strengthBar.classList.add(strength.colorClass);
+            // 设置宽度和文本
+            strengthBar.style.width = strength.width;
+            strengthText.textContent = `密码强度：${strength.text} (长度：${document.getElementById('password-input').value.length}位)`;
+        }
+
+        // 绑定测试按钮点击事件
+        document.getElementById('test-password-btn').addEventListener('click', function() {
+            const password = document.getElementById('password-input').value;
+            const strength = calculatePasswordStrength(password);
+            renderStrengthUI(strength);
+        });
+
+        // 绑定输入框实时检测（可选）
+        document.getElementById('password-input').addEventListener('input', function() {
+            const password = this.value;
+            const strength = calculatePasswordStrength(password);
+            renderStrengthUI(strength);
+        });
     </script>
 </body>
 </html>
