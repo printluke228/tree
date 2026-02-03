@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DH 密码学色彩实验模拟器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .color-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            transition: all 0.5s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            font-weight: bold;
+            font-size: 0.85rem;
+            border: 4px solid #fff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            line-height: 1.2;
+        }
+        .math-tag {
+            font-family: monospace;
+            background: rgba(0,0,0,0.1);
+            padding: 2px 4px;
+            border-radius: 4px;
+            margin-top: 4px;
+            font-size: 0.75rem;
+        }
+        .step-card {
+            display: none;
+        }
+        .step-card.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .mix-plus {
+            font-size: 24px;
+            font-weight: bold;
+            color: #666;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans">
+
+    <div class="max-w-4xl mx-auto py-10 px-4">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold text-slate-800 mb-2">色彩炼金术：DH 密钥交换模拟</h1>
+            <p class="text-slate-600 font-medium">数学模型：时钟上的秘密数字（模运算版 DH）</p>
+        </header>
+
+        <!-- 进度条 -->
+        <div class="flex justify-between mb-8 px-2">
+            <div id="progress-1" class="h-2 w-1/4 bg-blue-500 rounded-full mx-1"></div>
+            <div id="progress-2" class="h-2 w-1/4 bg-gray-300 rounded-full mx-1"></div>
+            <div id="progress-3" class="h-2 w-1/4 bg-gray-300 rounded-full mx-1"></div>
+            <div id="progress-4" class="h-2 w-1/4 bg-gray-300 rounded-full mx-1"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-xl p-8 min-h-[550px] flex flex-col">
+            
+            <!-- Step 1: 公开底色 -->
+            <div id="step-1" class="step-card active">
+                <h2 class="text-2xl font-bold mb-4 text-center">第一步：确定公开底色 (Public Base)</h2>
+                <p class="text-center text-gray-500 mb-8">这是公开的信息，黑客（窃听者）也可以看到。</p>
+                <div class="flex flex-col items-center">
+                    <div id="public-color-display" class="color-circle mb-6" style="background-color: #ffd700;">
+                        <div>公开底色</div>
+                        <div class="math-tag">g mod p</div>
+                    </div>
+                    <div class="grid grid-cols-4 gap-4">
+                        <button onclick="setPublicColor('#ffd700')" class="w-10 h-10 rounded-full bg-[#ffd700] ring-2 ring-offset-2 ring-blue-500"></button>
+                        <button onclick="setPublicColor('#00ced1')" class="w-10 h-10 rounded-full bg-[#00ced1]"></button>
+                        <button onclick="setPublicColor('#ff69b4')" class="w-10 h-10 rounded-full bg-[#ff69b4]"></button>
+                        <button onclick="setPublicColor('#9370db')" class="w-10 h-10 rounded-full bg-[#9370db]"></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: 私密色 -->
+            <div id="step-2" class="step-card">
+                <h2 class="text-2xl font-bold mb-4 text-center">第二步：选择个人私密数字 (Private Key)</h2>
+                <p class="text-center text-gray-500 mb-8">A 和 B 各自挑选一个秘密，绝不告诉对方。</p>
+                <div class="flex justify-around items-center">
+                    <div class="text-center">
+                        <div class="color-circle mb-4 mx-auto border-dashed border-slate-300 bg-slate-100" id="preview-a" style="color:#666; text-shadow:none;">
+                            <div>私密色 a</div>
+                            <div class="math-tag">私钥 a</div>
+                        </div>
+                        <input type="color" id="color-a" value="#ff0000" onchange="updateColors(); syncPreview('a')" class="w-20 h-10 cursor-pointer">
+                    </div>
+                    <div class="text-center">
+                        <div class="color-circle mb-4 mx-auto border-dashed border-slate-300 bg-slate-100" id="preview-b" style="color:#666; text-shadow:none;">
+                            <div>私密色 b</div>
+                            <div class="math-tag">私钥 b</div>
+                        </div>
+                        <input type="color" id="color-b" value="#0000ff" onchange="updateColors(); syncPreview('b')" class="w-20 h-10 cursor-pointer">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: 交换中间色 -->
+            <div id="step-3" class="step-card">
+                <h2 class="text-2xl font-bold mb-4 text-center">第三步：混合并交换 (Public Exchange)</h2>
+                <p class="text-center text-gray-500 mb-6">我们将“底色”和“私密色”混合生成“中间色”，然后在网络上交换。</p>
+                
+                <div class="grid grid-cols-2 gap-8">
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                        <p class="text-center font-bold text-blue-800 mb-4">Alice 计算</p>
+                        <div class="flex items-center justify-center space-x-2">
+                            <div id="p1-base" class="w-10 h-10 rounded-full border-2 border-white shadow-sm flex items-center justify-center text-[8px] text-white font-bold">底色</div>
+                            <span class="mix-plus">+</span>
+                            <div id="p1-private" class="w-10 h-10 rounded-full border-2 border-white shadow-sm flex items-center justify-center text-[8px] text-white font-bold">私钥a</div>
+                            <span class="mix-plus">=</span>
+                            <div id="mix-a" class="color-circle" style="width: 85px; height: 85px;">
+                                <div>中间色 A</div>
+                                <div class="math-tag">gᵃ mod p</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-xl border border-green-100">
+                        <p class="text-center font-bold text-green-800 mb-4">Bob 计算</p>
+                        <div class="flex items-center justify-center space-x-2">
+                            <div id="p2-base" class="w-10 h-10 rounded-full border-2 border-white shadow-sm flex items-center justify-center text-[8px] text-white font-bold">底色</div>
+                            <span class="mix-plus">+</span>
+                            <div id="p2-private" class="w-10 h-10 rounded-full border-2 border-white shadow-sm flex items-center justify-center text-[8px] text-white font-bold">私钥b</div>
+                            <span class="mix-plus">=</span>
+                            <div id="mix-b" class="color-circle" style="width: 85px; height: 85px;">
+                                <div>中间色 B</div>
+                                <div class="math-tag">gᵇ mod p</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 p-4 bg-orange-50 border-2 border-dashed border-orange-200 rounded-lg text-center">
+                    <p class="text-orange-800 font-medium">⚠️ 拦截警告：黑客在时钟表盘上截获了中间数字 8 和 3！</p>
+                    <p class="text-xs text-orange-600 mt-1">映射：中间色 A 和 B 就是大家大声喊出来的“公钥”。</p>
+                </div>
+            </div>
+
+            <!-- Step 4: 最终合成 -->
+            <div id="step-4" class="step-card">
+                <h2 class="text-2xl font-bold mb-4 text-center">第四步：合成最终密钥 (Shared Secret)</h2>
+                <p class="text-center text-gray-500 mb-8">使用对方发来的中间色，加上自己的私密色进行二次混合。</p>
+                
+                <div class="flex flex-col space-y-8">
+                    <div class="flex justify-around items-center">
+                        <div class="text-center flex flex-col items-center">
+                            <span class="text-sm font-bold text-gray-400 mb-2">Alice 的二次混合</span>
+                            <div class="flex items-center space-x-2">
+                                <div id="final-mix-a-src" class="w-12 h-12 rounded-full border-2 border-white shadow-md flex items-center justify-center text-[8px] text-white font-bold text-center">对方中间色B</div>
+                                <span class="mix-plus">+</span>
+                                <div id="final-priv-a" class="w-12 h-12 rounded-full border-2 border-white shadow-md flex items-center justify-center text-[8px] text-white font-bold text-center">自己私钥a</div>
+                                <span class="mix-plus">=</span>
+                                <div id="final-a" class="color-circle">
+                                    <div>最终密钥</div>
+                                    <div class="math-tag">gᵇᵃ mod p</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center flex flex-col items-center">
+                            <span class="text-sm font-bold text-gray-400 mb-2">Bob 的二次混合</span>
+                            <div class="flex items-center space-x-2">
+                                <div id="final-mix-b-src" class="w-12 h-12 rounded-full border-2 border-white shadow-md flex items-center justify-center text-[8px] text-white font-bold text-center">对方中间色A</div>
+                                <span class="mix-plus">+</span>
+                                <div id="final-priv-b" class="w-12 h-12 rounded-full border-2 border-white shadow-md flex items-center justify-center text-[8px] text-white font-bold text-center">自己私钥b</div>
+                                <span class="mix-plus">=</span>
+                                <div id="final-b" class="color-circle">
+                                    <div>最终密钥</div>
+                                    <div class="math-tag">gᵃᵇ mod p</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="result-success" class="hidden p-6 bg-green-100 rounded-xl text-center border-2 border-green-500 animate-bounce">
+                        <p class="text-green-800 text-xl font-bold">🎉 数学奇迹：gᵃᵇ = gᵇᵃ</p>
+                        <p class="text-green-700">Alice 和 Bob 在没见过对方私密色的情况下，成功同步了相同的密钥！</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 控制按钮 -->
+            <div class="mt-auto pt-10 flex justify-between">
+                <button id="prevBtn" onclick="prevStep()" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg font-bold disabled:opacity-50">上一步</button>
+                <button id="nextBtn" onclick="handleNextClick()" class="px-6 py-2 bg-blue-600 text-white rounded-lg font-bold">下一步</button>
+            </div>
+        </div>
+
+        <div class="mt-8 text-sm text-slate-400 bg-slate-100 p-4 rounded-lg">
+            <strong>核心思想映射：</strong><br>
+            1. <strong>底色 + 私密色 = 中间色</strong> 对应 g^x mod p = Y。混合容易，但从 Y 反推 x 极难（离散对数难题）。<br>
+            2. <strong>二次混合</strong> 保证了双方结果一致，因为无论先加 A 还是先加 B，结果颜色（密钥）都相同。
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let publicColor = '#ffd700';
+
+        function setPublicColor(hex) {
+            publicColor = hex;
+            document.getElementById('public-color-display').style.backgroundColor = hex;
+            const buttons = document.querySelectorAll('#step-1 button');
+            buttons.forEach(btn => btn.classList.remove('ring-2', 'ring-offset-2', 'ring-blue-500'));
+            // 简单逻辑直接根据点击的目标设置样式
+            if(event && event.target) {
+                event.target.classList.add('ring-2', 'ring-offset-2', 'ring-blue-500');
+            }
+            updateColors();
+        }
+
+        function syncPreview(who) {
+            const val = document.getElementById(`color-${who}`).value;
+            const preview = document.getElementById(`preview-${who}`);
+            if(preview) {
+                preview.style.backgroundColor = val;
+                preview.style.color = 'white';
+                preview.style.borderStyle = 'solid';
+                preview.style.textShadow = '0 1px 3px rgba(0,0,0,0.8)';
+            }
+        }
+
+        function updateColors() {
+            const colorA = document.getElementById('color-a').value;
+            const colorB = document.getElementById('color-b').value;
+
+            const mixedA = blendColors(publicColor, colorA, 0.5);
+            const mixedB = blendColors(publicColor, colorB, 0.5);
+
+            document.getElementById('p1-base').style.backgroundColor = publicColor;
+            document.getElementById('p1-private').style.backgroundColor = colorA;
+            document.getElementById('mix-a').style.backgroundColor = mixedA;
+
+            document.getElementById('p2-base').style.backgroundColor = publicColor;
+            document.getElementById('p2-private').style.backgroundColor = colorB;
+            document.getElementById('mix-b').style.backgroundColor = mixedB;
+
+            const finalA = blendColors(mixedB, colorA, 0.33);
+            const finalB = blendColors(mixedA, colorB, 0.33);
+
+            document.getElementById('final-mix-a-src').style.backgroundColor = mixedB;
+            document.getElementById('final-priv-a').style.backgroundColor = colorA;
+            document.getElementById('final-a').style.backgroundColor = finalA;
+
+            document.getElementById('final-mix-b-src').style.backgroundColor = mixedA;
+            document.getElementById('final-priv-b').style.backgroundColor = colorB;
+            document.getElementById('final-b').style.backgroundColor = finalB;
+            
+            const successDiv = document.getElementById('result-success');
+            if (finalA === finalB) {
+                successDiv.classList.remove('hidden');
+            } else {
+                successDiv.classList.add('hidden');
+            }
+        }
+
+        function blendColors(color1, color2, weight) {
+            const r1 = parseInt(color1.substring(1, 3), 16);
+            const g1 = parseInt(color1.substring(3, 5), 16);
+            const b1 = parseInt(color1.substring(5, 7), 16);
+
+            const r2 = parseInt(color2.substring(1, 3), 16);
+            const g2 = parseInt(color2.substring(3, 5), 16);
+            const b2 = parseInt(color2.substring(5, 7), 16);
+
+            const r = Math.round(r1 * (1 - weight) + r2 * weight);
+            const g = Math.round(g1 * (1 - weight) + g2 * weight);
+            const b = Math.round(b1 * (1 - weight) + b2 * weight);
+
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        }
+
+        function handleNextClick() {
+            if (currentStep === 4) {
+                // 执行页面重置
+                window.location.reload();
+            } else {
+                nextStep();
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < 4) {
+                document.getElementById(`step-${currentStep}`).classList.remove('active');
+                document.getElementById(`progress-${currentStep}`).classList.replace('bg-blue-500', 'bg-green-500');
+                currentStep++;
+                document.getElementById(`step-${currentStep}`).classList.add('active');
+                document.getElementById(`progress-${currentStep}`).classList.replace('bg-gray-300', 'bg-blue-500');
+                updateBtnState();
+                if (currentStep === 4) updateColors();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                document.getElementById(`step-${currentStep}`).classList.remove('active');
+                document.getElementById(`progress-${currentStep}`).classList.replace('bg-blue-500', 'bg-gray-300');
+                currentStep--;
+                document.getElementById(`step-${currentStep}`).classList.add('active');
+                document.getElementById(`progress-${currentStep}`).classList.replace('bg-green-500', 'bg-blue-500');
+                updateBtnState();
+            }
+        }
+
+        function updateBtnState() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = (currentStep === 1);
+            
+            if (currentStep === 4) {
+                nextBtn.innerText = '重新开始';
+                nextBtn.classList.replace('bg-blue-600', 'bg-orange-600');
+            } else {
+                nextBtn.innerText = '下一步';
+                nextBtn.classList.replace('bg-orange-600', 'bg-blue-600');
+            }
+        }
+
+        // 初始化
+        window.onload = function() {
+            syncPreview('a');
+            syncPreview('b');
+            updateColors();
+            updateBtnState();
+        };
+    </script>
+</body>
+</html>
