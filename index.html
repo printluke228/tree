@@ -545,7 +545,7 @@
 				<button class="useless-btn btn-back">前往treeb.top/hd</button>
 			</div>
 
-			<div class="flip-btn-wrapper">
+			<div class="flip-btn-wrapper" id="gamesBtn">
 				<button class="useless-btn btn-front">games</button>
 				<button class="useless-btn btn-back">前往 treeb.top/games</button>
 			</div>
@@ -591,7 +591,7 @@
 			document.getElementById('mathBtn').onclick = () => window.location.href = 'https://www.treeb.top/math';
 			document.getElementById('chatBtn').onclick = () => window.location.href = 'https://www.treeb.top/chat';
 			document.getElementById('hdBtn').onclick = () => window.location.href = 'https://www.treeb.top/hd';
-	document.getElementById('gamesBtn').onclick = () => window.location.href = 'https://www.treeb.top/games';
+			document.getElementById('gamesBtn').onclick = () => window.location.href = 'https://www.treeb.top/games';
 			function playVideo() {
 				if (video.paused && hasUserInteracted) {
 					video.play().catch(err => {
@@ -705,4 +705,5 @@
 			}
 		</script>
 	</body>
+
 </html>
