@@ -5,11 +5,208 @@
     <title>初一下学期（北师大版）数学知识点思维导图 | treeb.top</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <style>
+        /* 新增导航栏样式 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .navbar-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .navbar-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .nav-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .nav-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* 弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+        .modal-title {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* 计算器样式 */
+        .calculator {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .calc-display {
+            grid-column: 1 / -1;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: right;
+            font-size: 24px;
+            margin-bottom: 10px;
+            min-height: 30px;
+            word-wrap: break-word;
+        }
+        .calc-btn {
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #eee;
+            transition: background-color 0.2s;
+        }
+        .calc-btn:hover {
+            background-color: #ddd;
+        }
+        .calc-btn.operator {
+            background-color: #3498db;
+            color: white;
+        }
+        .calc-btn.operator:hover {
+            background-color: #2980b9;
+        }
+        .calc-btn.equal {
+            background-color: #2ecc71;
+            color: white;
+            grid-column: 4;
+            grid-row: 4 / 6;
+        }
+        .calc-btn.equal:hover {
+            background-color: #27ae60;
+        }
+        .calc-btn.clear {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .calc-btn.clear:hover {
+            background-color: #c0392b;
+        }
+
+        /* 虚拟尺子样式 */
+        .ruler-container {
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .ruler {
+            position: relative;
+            height: 80px;
+            background-color: white;
+            border: 2px solid #2c3e50;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .ruler-scale {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            width: 100%;
+            height: 60px;
+        }
+        .cm-mark {
+            position: absolute;
+            height: 40px;
+            width: 2px;
+            background-color: #2c3e50;
+            top: 10px;
+        }
+        .mm-mark {
+            position: absolute;
+            height: 20px;
+            width: 1px;
+            background-color: #2c3e50;
+            top: 20px;
+        }
+        .cm-text {
+            position: absolute;
+            bottom: 5px;
+            font-size: 12px;
+            color: #2c3e50;
+            transform: translateX(-50%);
+        }
+        .slider {
+            position: absolute;
+            top: 0;
+            width: 1px;
+            height: 80px;
+            background-color: #e74c3c;
+            z-index: 10;
+            cursor: ew-resize;
+        }
+        .slider-label {
+            position: absolute;
+            top: -25px;
+            background-color: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            transform: translateX(-50%);
+        }
+        .ruler-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* 原有样式调整（增加顶部间距） */
         body {
             font-family: "Microsoft Yahei", Arial, sans-serif;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 80px 20px 20px; /* 增加顶部padding适配导航栏 */
             background-color: #f9f9f9;
         }
         h1 {
@@ -46,54 +243,114 @@
             padding-left: 15px;
             border-left: 1px solid #bdc3c7;
         }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 10px;
+            }
+            .navbar-buttons {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: center;
+            }
+            body {
+                padding-top: 100px;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- 新增导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-title">初一数学知识点 | 工具集</div>
+        <div class="navbar-buttons">
+            <button class="nav-btn" onclick="openModal('calculator-modal')">计算器</button>
+            <button class="nav-btn" onclick="openModal('ruler-modal')">虚拟尺子</button>
+        </div>
+    </nav>
+
+    <!-- 计算器弹窗 -->
+    <div id="calculator-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('calculator-modal')">&times;</span>
+            <h3 class="modal-title">图形化计算器</h3>
+            <div class="calculator">
+                <div class="calc-display" id="calc-display">0</div>
+                <button class="calc-btn clear" onclick="clearCalc()">C</button>
+                <button class="calc-btn" onclick="appendToCalc('(')">(</button>
+                <button class="calc-btn" onclick="appendToCalc(')')">)</button>
+                <button class="calc-btn operator" onclick="appendToCalc('/')">÷</button>
+                <button class="calc-btn" onclick="appendToCalc('7')">7</button>
+                <button class="calc-btn" onclick="appendToCalc('8')">8</button>
+                <button class="calc-btn" onclick="appendToCalc('9')">9</button>
+                <button class="calc-btn operator" onclick="appendToCalc('*')">×</button>
+                <button class="calc-btn" onclick="appendToCalc('4')">4</button>
+                <button class="calc-btn" onclick="appendToCalc('5')">5</button>
+                <button class="calc-btn" onclick="appendToCalc('6')">6</button>
+                <button class="calc-btn operator" onclick="appendToCalc('-')">-</button>
+                <button class="calc-btn" onclick="appendToCalc('1')">1</button>
+                <button class="calc-btn" onclick="appendToCalc('2')">2</button>
+                <button class="calc-btn" onclick="appendToCalc('3')">3</button>
+                <button class="calc-btn operator" onclick="appendToCalc('+')">+</button>
+                <button class="calc-btn" onclick="appendToCalc('0')">0</button>
+                <button class="calc-btn" onclick="appendToCalc('.')">.</button>
+                <button class="calc-btn" onclick="deleteLastChar()">←</button>
+                <button class="calc-btn equal" onclick="calculateResult()">=</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 虚拟尺子弹窗 -->
+    <div id="ruler-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('ruler-modal')">&times;</span>
+            <h3 class="modal-title">虚拟尺子 (厘米)</h3>
+            <div class="ruler-container">
+                <div class="ruler" id="ruler">
+                    <div class="ruler-scale" id="ruler-scale"></div>
+                    <div class="slider" id="slider" style="left: 0px;">
+                        <div class="slider-label" id="slider-label">0.0 cm</div>
+                    </div>
+                </div>
+                <div class="ruler-controls">
+                    <button class="nav-btn" onclick="resetRuler()">重置尺子</button>
+                    <button class="nav-btn" onclick="toggleRulerUnit()">切换单位 (cm/mm)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 原有内容 -->
     <h1>初一下学期（北师大版）数学知识点思维导图</h1>
 
     <div class="mindmap-section">
         <h2>第一章 整式的乘除</h2>
-        <div class="mindmap-section">
-    <div class="topic">
-        <strong>1. 幂的运算</strong>
-        <div class="subtopic">同底数幂相乘</div>
-        <div class="subtopic">幂的乘方：</div>
-        <div class="subtopic">积的乘方：</div>
-        <div class="subtopic">同底数幂相除：</div>
-        <div class="subtopic">零指数幂：</div>
-        <div class="subtopic">负整数指数幂：</div>
-    </div>
-    <div class="topic">
-        <strong>2. 整式乘法</strong>
-        <div class="subtopic">单项式 × 单项式：系数相乘，同底数幂相乘</div>
-        <div class="subtopic">单项式 × 多项式：分配律 </div>
-        <div class="subtopic">多项式 × 多项式：</div>
-    </div>
-    <div class="topic">
-        <strong>3. 乘法公式</strong>
-        <div class="subtopic">平方差公式：</div>
-        <div class="subtopic">完全平方公式：</div>
-    </div>
-    <div class="topic">
-        <strong>4. 整式除法</strong>
-        <div class="subtopic">单项式 ÷ 单项式：系数相除，同底数幂相除</div>
-        <div class="subtopic">多项式 ÷ 单项式：分配律 </div>
-    </div>
+        <div class="topic">
+            <strong>1. 幂的运算</strong>
+            <div class="subtopic">同底数幂相乘：\(a^m \cdot a^n = a^{m+n}\)</div>
+            <div class="subtopic">幂的乘方：\((a^m)^n = a^{mn}\)</div>
+            <div class="subtopic">积的乘方：\((ab)^n = a^n b^n\)</div>
+            <div class="subtopic">同底数幂相除：\(a^m \div a^n = a^{m-n}\)（\(a \neq 0\)）</div>
+            <div class="subtopic">零指数幂：\(a^0 = 1\)（\(a \neq 0\)）</div>
+            <div class="subtopic">负整数指数幂：\(a^{-p} = \frac{1}{a^p}\)（\(a \neq 0\)，\(p\)为正整数）</div>
+        </div>
         <div class="topic">
             <strong>2. 整式乘法</strong>
             <div class="subtopic">单项式 × 单项式：系数相乘，同底数幂相乘</div>
-            <div class="subtopic">单项式 × 多项式：分配律 </div>
-            <div class="subtopic">多项式 × 多项式：</div>
+            <div class="subtopic">单项式 × 多项式：分配律 \(a(b+c) = ab+ac\)</div>
+            <div class="subtopic">多项式 × 多项式：\((a+b)(c+d) = ac+ad+bc+bd\)</div>
         </div>
         <div class="topic">
             <strong>3. 乘法公式</strong>
-            <div class="subtopic">平方差公式</div>
-            <div class="subtopic">完全平方公式</div>
+            <div class="subtopic">平方差公式：\((a+b)(a-b) = a^2 - b^2\)</div>
+            <div class="subtopic">完全平方公式：\((a \pm b)^2 = a^2 \pm 2ab + b^2\)</div>
         </div>
         <div class="topic">
             <strong>4. 整式除法</strong>
             <div class="subtopic">单项式 ÷ 单项式：系数相除，同底数幂相除</div>
-            <div class="subtopic">多项式 ÷ 单项式：分配律 </div>
+            <div class="subtopic">多项式 ÷ 单项式：分配律 \((a+b) \div c = a\div c + b\div c\)</div>
         </div>
     </div>
 
@@ -102,7 +359,7 @@
         <div class="topic">
             <strong>1. 相交线</strong>
             <div class="subtopic">对顶角：相等</div>
-            <div class="subtopic">邻补角：和为 180</div>
+            <div class="subtopic">邻补角：和为 \(180^\circ\)</div>
             <div class="subtopic">垂直：过一点有且只有一条直线与已知直线垂直</div>
             <div class="subtopic">垂线段：点到直线的距离是垂线段的长度</div>
         </div>
@@ -203,5 +460,182 @@
         </div>
     </div>
 
+    <script>
+        // 弹窗控制
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+            // 初始化尺子（打开尺子弹窗时）
+            if (modalId === 'ruler-modal') {
+                initRuler();
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // 点击弹窗外部关闭
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // 计算器功能
+        let currentInput = '0';
+        
+        function appendToCalc(value) {
+            if (currentInput === '0' && value !== '.' && !['+', '-', '*', '/'].includes(value)) {
+                currentInput = value;
+            } else {
+                currentInput += value;
+            }
+            updateDisplay();
+        }
+
+        function clearCalc() {
+            currentInput = '0';
+            updateDisplay();
+        }
+
+        function deleteLastChar() {
+            if (currentInput.length > 1) {
+                currentInput = currentInput.slice(0, -1);
+            } else {
+                currentInput = '0';
+            }
+            updateDisplay();
+        }
+
+        function calculateResult() {
+            try {
+                // 替换×÷为js识别的运算符
+                let expression = currentInput.replace(/×/g, '*').replace(/÷/g, '/');
+                // 安全计算
+                const result = eval(expression);
+                currentInput = result.toString();
+                updateDisplay();
+            } catch (error) {
+                currentInput = '错误';
+                updateDisplay();
+                setTimeout(() => {
+                    currentInput = '0';
+                    updateDisplay();
+                }, 1500);
+            }
+        }
+
+        function updateDisplay() {
+            document.getElementById('calc-display').textContent = currentInput;
+        }
+
+        // 虚拟尺子功能
+        let rulerUnit = 'cm'; // 默认单位
+        let isDragging = false;
+
+        function initRuler() {
+            const rulerScale = document.getElementById('ruler-scale');
+            const ruler = document.getElementById('ruler');
+            const rulerWidth = ruler.offsetWidth;
+            const maxCm = Math.floor(rulerWidth / 20); // 每厘米20px
+            
+            // 清空刻度
+            rulerScale.innerHTML = '';
+
+            // 创建刻度
+            for (let i = 0; i <= maxCm; i++) {
+                // 厘米刻度
+                const cmMark = document.createElement('div');
+                cmMark.className = 'cm-mark';
+                cmMark.style.left = `${i * 20}px`;
+                rulerScale.appendChild(cmMark);
+
+                // 厘米数字
+                const cmText = document.createElement('div');
+                cmText.className = 'cm-text';
+                cmText.style.left = `${i * 20}px`;
+                cmText.textContent = `${i}`;
+                rulerScale.appendChild(cmText);
+
+                // 毫米刻度
+                for (let j = 1; j < 10; j++) {
+                    const mmMark = document.createElement('div');
+                    mmMark.className = 'mm-mark';
+                    mmMark.style.left = `${i * 20 + j * 2}px`;
+                    rulerScale.appendChild(mmMark);
+                }
+            }
+
+            // 初始化滑块
+            const slider = document.getElementById('slider');
+            slider.style.left = '0px';
+            updateSliderLabel(0);
+
+            // 绑定滑块事件
+            slider.addEventListener('mousedown', startDrag);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDrag);
+            slider.addEventListener('touchstart', startDrag);
+            document.addEventListener('touchmove', drag);
+            document.addEventListener('touchend', stopDrag);
+        }
+
+        function startDrag(e) {
+            isDragging = true;
+            e.preventDefault();
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            
+            const ruler = document.getElementById('ruler');
+            const slider = document.getElementById('slider');
+            const rulerRect = ruler.getBoundingClientRect();
+            let clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            
+            // 计算滑块位置（限制在尺子范围内）
+            let left = clientX - rulerRect.left;
+            left = Math.max(0, Math.min(left, rulerRect.width));
+            
+            slider.style.left = `${left}px`;
+            updateSliderLabel(left);
+        }
+
+        function stopDrag() {
+            isDragging = false;
+        }
+
+        function updateSliderLabel(pixel) {
+            const label = document.getElementById('slider-label');
+            let value;
+            
+            if (rulerUnit === 'cm') {
+                value = (pixel / 20).toFixed(1);
+                label.textContent = `${value} cm`;
+            } else {
+                value = Math.round(pixel * 5);
+                label.textContent = `${value} mm`;
+            }
+        }
+
+        function resetRuler() {
+            const slider = document.getElementById('slider');
+            slider.style.left = '0px';
+            updateSliderLabel(0);
+        }
+
+        function toggleRulerUnit() {
+            rulerUnit = rulerUnit === 'cm' ? 'mm' : 'cm';
+            const slider = document.getElementById('slider');
+            const pixel = parseFloat(slider.style.left);
+            updateSliderLabel(pixel);
+        }
+
+        // 页面加载完成后初始化
+        window.onload = function() {
+            // 确保计算器显示初始化
+            updateDisplay();
+        }
+    </script>
 </body>
 </html>
