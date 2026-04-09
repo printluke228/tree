@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北京市第二十中学 - 扬五彩青春，做中国脊梁</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- GSAP 动画库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        
+        :root {
+            --primary-color: #1e40af;
+            --secondary-color: #0ea5e9;
+            --accent-color: #f97316;
+            --text-color: #1f2937;
+            --light-bg: #f3f4f6;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            color: var(--text-color);
+            scroll-behavior: smooth;
+        }
+        
+        .hero-section {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://p11-doubao-search-sign.byteimg.com/labis/2040e88534f690ada705f33b3980ef0f~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1791294657&x-signature=CH9tZJ3CWbYA5HCkHxXczTQ7kMM%3D');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+        }
+        
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--accent-color);
+        }
+        
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .active-nav {
+            color: var(--accent-color);
+        }
+        
+        .active-nav::after {
+            width: 100%;
+        }
+        
+        #campus-3d {
+            width: 100%;
+            height: 500px;
+            background-color: #f0f9ff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .chat-container {
+            height: 400px;
+            overflow-y: auto;
+        }
+        
+        .chat-message {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            max-width: 80%;
+        }
+        
+        .user-message {
+            background-color: #e2e8f0;
+            margin-left: auto;
+        }
+        
+        .bot-message {
+            background-color: #dbeafe;
+        }
+        
+        .typing-indicator {
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background-color: #3b82f6;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 1px;
+            opacity: 0.6;
+            animation: typing 1.4s infinite both;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        
+        .scroll-reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .hero-section {
+                height: 70vh;
+            }
+            
+            #campus-3d {
+                height: 300px;
+            }
+            
+            .chat-container {
+                height: 300px;
+            }
+        }
+        
+        /* 深色模式 */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text-color: #f3f4f6;
+                --light-bg: #1f2937;
+            }
+            
+            body {
+                background-color: #111827;
+            }
+            
+            .card {
+                background-color: #1f2937;
+            }
+            
+            .user-message {
+                background-color: #374151;
+            }
+            
+            .bot-message {
+                background-color: #1e40af;
+                color: white;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-md fixed w-full z-50 transition-all duration-300" id="main-nav">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <img src="https://p26-doubao-search-sign.byteimg.com/labis/c17978a388da3a9b8cf29b9e7b0383b5~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1791294657&x-signature=1sKihKqBVTGix1FECVgdTwObE2E%3D" alt="北京市第二十中学" class="h-12 mr-3">
+                    <div>
+                        <h1 class="text-xl font-bold text-blue-800">北京市第二十中学</h1>
+                        <p class="text-xs text-gray-600">扬五彩青春，做中国脊梁</p>
+                    </div>
+                </div>
+                
+                <!-- 桌面导航 -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="nav-link active-nav font-medium">首页</a>
+                    <a href="#about" class="nav-link font-medium">学校概况</a>
+                    <a href="#news" class="nav-link font-medium">新闻动态</a>
+                    <a href="#education" class="nav-link font-medium">教育教学</a>
+                    <a href="#ai-assistant" class="nav-link font-medium">智能助手</a>
+                </div>
+                
+                <!-- 移动端菜单按钮 -->
+                <div class="md:hidden">
+                    <button id="menu-toggle" class="text-gray-600 focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 移动端导航菜单 -->
+            <div id="mobile-menu" class="md:hidden hidden pt-4 pb-2">
+                <a href="#home" class="block py-2 px-4 hover:bg-gray-100 rounded">首页</a>
+                <a href="#about" class="block py-2 px-4 hover:bg-gray-100 rounded">学校概况</a>
+                <a href="#news" class="block py-2 px-4 hover:bg-gray-100 rounded">新闻动态</a>
+                <a href="#education" class="block py-2 px-4 hover:bg-gray-100 rounded">教育教学</a>
+                <a href="#ai-assistant" class="block py-2 px-4 hover:bg-gray-100 rounded">智能助手</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 首页英雄区 -->
+    <section id="home" class="hero-section flex items-center justify-center text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4 animate__animated animate__fadeInDown">北京市第二十中学</h1>
+            <p class="text-xl md:text-2xl mb-8 animate__animated animate__fadeInUp">扬五彩青春，做中国脊梁</p>
+            <div class="flex flex-col md:flex-row justify-center gap-4 animate__animated animate__fadeInUp animate__delay-1s">
+                <a href="#about" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-full transition duration-300">
+                    <i class="fas fa-info-circle mr-2"></i>了解学校
+                </a>
+                <a href="#ai-assistant" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-full transition duration-300">
+                    <i class="fas fa-robot mr-2"></i>智能助手
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 学校概况 -->
+    <section id="about" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-12 section-title">学校概况</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <div class="scroll-reveal">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-800">学校简介</h3>
+                    <p class="mb-4">北京市第二十中学创建于1951年，是新中国成立之初兴办的第一批学校。2004年学校被评为北京市示范高中校。目前一校三址，共占地160余亩，包括小营、新都、永泰校区，其中小营校区为完全中学，新都校区为初中校，永泰校区为九年一贯制学校。目前有师生三千五百多人。</p>
+                    <p>二十中在各级领导的关怀下，经过了几代教职工的拼搏努力，实现了跨越式发展，建设成为了一所"风气正、环境美、质量高"的现代化学校，被赞誉为"海淀北部的教育明珠"。</p>
+                </div>
+                
+                <div class="scroll-reveal">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-800">办学理念</h3>
+                    <p class="mb-4">学校坚持立德树人，大力推进素质教育。以"德育为首，全面发展，追求一流，办有特色"为办学指导思想，以"做中国脊梁"为教育理念，着力于培养"志存高远，品学兼优，身心和谐，能力卓越"的青年。</p>
+                    <p>通过"脊梁教育"，让学生在美好的青春年华里，成长为一个综合素质全面、有创新精神和实践能力、敢于担当社会国家责任的人，一个具有民族精神、科学素养、艺术气质、健康体魄的人。</p>
+                </div>
+            </div>
+            
+            <div class="mb-12 scroll-reveal">
+                <h3 class="text-xl font-semibold mb-6 text-blue-800">历史沿革</h3>
+                <div class="relative">
+                    <!-- 时间线 -->
+                    <div class="absolute left-0 md:left-1/2 h-full w-1 bg-blue-200 transform md:translate-x-[-50%]"></div>
+                    
+                    <!-- 时间点1 -->
+                    <div class="relative mb-8 md:ml-0 md:w-1/2 md:pl-8 md:pr-0 md:ml-auto md:mr-0 md:text-left">
+                        <div class="absolute top-0 left-0 md:left-[-8px] md:top-1/2 w-4 h-4 bg-blue-800 rounded-full transform md:translate-y-[-50%]"></div>
+                        <div class="bg-white p-4 rounded-lg shadow-md ml-6 md:ml-0">
+                            <h4 class="font-bold text-blue-800">1951年</h4>
+                            <p>北京市第二十中学建立，原名"清河中学班"，共有三个教学班，负责人为程欣如(当时为小学主任)校舍座落在清河镇街北头的烧锅(制酒车间和库房)内，一室三用(教室、食堂、宿舍)条件十分艰苦、简陋。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 时间点2 -->
+                    <div class="relative mb-8 md:w-1/2 md:pl-8 md:pr-0 md:mr-auto md:text-left">
+                        <div class="absolute top-0 left-0 md:left-[-8px] md:top-1/2 w-4 h-4 bg-blue-800 rounded-full transform md:translate-y-[-50%]"></div>
+                        <div class="bg-white p-4 rounded-lg shadow-md ml-6 md:ml-0">
+                            <h4 class="font-bold text-blue-800">1952年</h4>
+                            <p>"清河中学班"被北京市教育局正式命名为"北京市第二十中学"，任命张省三同志为校长。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 时间点3 -->
+                    <div class="relative mb-8 md:ml-0 md:w-1/2 md:pl-8 md:pr-0 md:ml-auto md:mr-0 md:text-left">
+                        <div class="absolute top-0 left-0 md:left-[-8px] md:top-1/2 w-4 h-4 bg-blue-800 rounded-full transform md:translate-y-[-50%]"></div>
+                        <div class="bg-white p-4 rounded-lg shadow-md ml-6 md:ml-0">
+                            <h4 class="font-bold text-blue-800">1958年</h4>
+                            <p>随着国家的发展和需要，北京市第二十中学扩建，开始招收高中生，组建高中，迈开了完全中学的步伐。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 时间点4 -->
+                    <div class="relative mb-8 md:w-1/2 md:pl-8 md:pr-0 md:mr-auto md:text-left">
+                        <div class="absolute top-0 left-0 md:left-[-8px] md:top-1/2 w-4 h-4 bg-blue-800 rounded-full transform md:translate-y-[-50%]"></div>
+                        <div class="bg-white p-4 rounded-lg shadow-md ml-6 md:ml-0">
+                            <h4 class="font-bold text-blue-800">2004年</h4>
+                            <p>学校被评为北京市示范高中校，成为海淀区北部一颗"教育明珠"。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 时间点5 -->
+                    <div class="relative md:ml-0 md:w-1/2 md:pl-8 md:pr-0 md:ml-auto md:mr-0 md:text-left">
+                        <div class="absolute top-0 left-0 md:left-[-8px] md:top-1/2 w-4 h-4 bg-blue-800 rounded-full transform md:translate-y-[-50%]"></div>
+                        <div class="bg-white p-4 rounded-lg shadow-md ml-6 md:ml-0">
+                            <h4 class="font-bold text-blue-800">2014年</h4>
+                            <p>北京市第二十中学附属实验学校成立，学校规模进一步扩大。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 scroll-reveal">
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <div class="text-blue-800 text-4xl mb-4">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">师资力量</h3>
+                    <p>学校有一支事业心责任感强、德才兼备、爱岗敬业的教师队伍。其中特级教师8人，市、区级学科带头人和骨干教师70余人。</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <div class="text-blue-800 text-4xl mb-4">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">学校荣誉</h3>
+                    <p>学校先后被评为首都文明单位、北京市德育先进集体、北京市科技、艺术教育示范校、北京市体育（田径）传统校等。</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <div class="text-blue-800 text-4xl mb-4">
+                        <i class="fas fa-school"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">校区分布</h3>
+                    <p>一校三址，包括小营校区（完全中学）、新都校区（初中校）和永泰校区（九年一贯制学校），共占地160余亩。</p>
+                </div>
+            </div>
+            
+            <!-- 校园3D导览 -->
+            <div class="mt-16 scroll-reveal">
+                <h3 class="text-xl font-semibold mb-6 text-blue-800">校园3D导览</h3>
+                <div id="campus-3d" class="shadow-lg"></div>
+                <div class="mt-4 text-center text-sm text-gray-600">
+                    <p>北京市第二十中学校园虚拟导览</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 新闻动态 -->
+    <section id="news" class="py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-12 section-title">新闻动态</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- 新闻1 -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden card scroll-reveal">
+                    <img src="https://p11-doubao-search-sign.byteimg.com/labis/60545518947e1a4eda0d756b43712c3b~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1791294657&x-signature=VljqGITsg%2Foip3y2FL5GWGUEnwQ%3D" alt="广播操比赛" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex items-center text-gray-600 text-sm mb-2">
+                            <i class="far fa-calendar-alt mr-2"></i>
+                            <span>2024-05-10</span>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">我校举办第十三届"青春校园杯"广播操比赛</h3>
+                        <p class="text-gray-700 mb-4">为丰富校园文化生活，增强学生体质，我校成功举办了第十三届"青春校园杯"广播操比赛。全校学生积极参与，展现了良好的精神风貌。</p>
+                        <a href="#" class="text-blue-800 hover:text-blue-600 font-medium flex items-center">
+                            阅读更多 <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 新闻2 -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden card scroll-reveal">
+                    <img src="https://p3-doubao-search-sign.byteimg.com/labis/5e9af5830fdb56904b88173ad204eadc~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1791294657&x-signature=km8ZSZTZDDw%2BDiOn2n3iehCutGw%3D" alt="五四表彰大会" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex items-center text-gray-600 text-sm mb-2">
+                            <i class="far fa-calendar-alt mr-2"></i>
+                            <span>2024-05-04</span>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">我校举行"五四"表彰大会</h3>
+                        <p class="text-gray-700 mb-4">为纪念五四运动，表彰先进集体和个人，我校举行了隆重的"五四"表彰大会。会上，校领导勉励全体学生继承和发扬五四精神，努力学习，报效祖国。</p>
+                        <a href="#" class="text-blue-800 hover:text-blue-600 font-medium flex items-center">
+                            阅读更多 <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 新闻3 -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden card scroll-reveal">
+                    <img src="https://p26-doubao-search-sign.byteimg.com/labis/d9b19d517cd400076693e9b01df3c0b9~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1791294657&x-signature=ckFdQoWyariQwRorfffA695j5yo%3D" alt="元旦教育活动" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex items-center text-gray-600 text-sm mb-2">
+                            <i class="far fa-calendar-alt mr-2"></i>
+                            <span>2024-01-01</span>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">高三年级举办元旦教育活动情景剧《我们的三年》</h3>
+                        <p class="text-gray-700 mb-4">为迎接新年，高三年级学生自编自导自演了情景剧《我们的三年》，回顾了高中生活的点点滴滴，表达了对母校的不舍和对未来的憧憬。</p>
+                        <a href="#" class="text-blue-800 hover:text-blue-600 font-medium flex items-center">
+                            阅读更多 <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 通知公告 -->
+            <div class="mt-16 scroll-reveal">
+                <h3 class="text-2xl font-semibold mb-6">通知公告</h3>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <ul class="divide-y divide-gray-200">
+                        <li class="py-4 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-medium">关于2024-2025学年度第一学期期末考试安排的通知</h4>
+                                <p class="text-sm text-gray-600 mt-1">2024-06-15</p>
+                            </div>
+                            <a href="#" class="text-blue-800 hover:text-blue-600">查看</a>
+                        </li>
+                        <li class="py-4 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-medium">2024年暑期校本课程报名通知</h4>
+                                <p class="text-sm text-gray-600 mt-1">2024-06-10</p>
+                            </div>
+                            <a href="#" class="text-blue-800 hover:text-blue-600">查看</a>
+                        </li>
+                        <li class="py-4 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-medium">关于开展2024年"安全生产月"活动的通知</h4>
+                                <p class="text-sm text-gray-600 mt-1">2024-06-01</p>
+                            </div>
+                            <a href="#" class="text-blue-800 hover:text-blue-600">查看</a>
+                        </li>
+                        <li class="py-4 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-medium">2024年端午节放假安排</h4>
+                                <p class="text-sm text-gray-600 mt-1">2024-05-25</p>
+                            </div>
+                            <a href="#" class="text-blue-800 hover:text-blue-600">查看</a>
+                        </li>
+                        <li class="py-4 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-medium">校服采购公示邀约</h4>
+                                <p class="text-sm text-gray-600 mt-1">2024-03-23</p>
+                            </div>
+                            <a href="#" class="text-blue-800 hover:text-blue-600">查看</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 教育教学 -->
+    <section id="education" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-12 section-title">教育教学</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <div class="scroll-reveal">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-800">课程设置</h3>
+                    <p class="mb-4">学校积极进行教学改革，丰富校本课程体系，探索拔尖创新人才培养，开展综合素质评价，促进学生多元发展，实现学生多向成才。</p>
+                    <p>学校形成了德育、体育、艺术教育、科技教育、心理健康教育等特色课程群，彰显了丰富的课程资源。</p>
+                    
+                    <div class="mt-6">
+                        <h4 class="font-medium mb-2">特色课程体系：</h4>
+                        <ul class="list-disc list-inside space-y-1 text-gray-700">
+                            <li>德育课程：脊梁教育、生命教育、责任教育</li>
+                            <li>体育课程：田径、健美操、体育舞蹈、跳绳、足球、篮球</li>
+                            <li>艺术课程：器乐、声乐、舞蹈、戏剧、美术、国画</li>
+                            <li>科技课程：人工智能、遥感科学、新能源、半导体</li>
+                            <li>心理健康课程：心理成长、人际交往、学业辅导、职业规划</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="scroll-reveal">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-800">特色项目</h3>
+                    <p class="mb-4">作为海淀区首批科学与技术高中、海淀区首批拔尖创新人才培养基地校，二十中已与清华大学、北京航空航天大学、华北电力大学、北京化工大学、二十一世纪空间技术公司等数十家科研院所、高校及科技企业建立长期合作。</p>
+                    <p>学校构建覆盖半导体、新能源等关键领域的特色课程体系与多元科研实践平台，拓宽科教融合、大中贯通的创新路径，推动高等教育拔尖培养模式向基础教育下沉延伸。</p>
+                    
+                    <div class="mt-6">
+                        <h4 class="font-medium mb-2">重点特色项目：</h4>
+                        <ul class="list-disc list-inside space-y-1 text-gray-700">
+                            <li>"黄昆半导体科学拔尖创新人才培养项目"</li>
+                            <li>遥感科学1+3贯通项目</li>
+                            <li>新能源合作课程</li>
+                            <li>高中—高校双导师制</li>
+                            <li>大学先修课程</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 教学成果 -->
+            <div class="mb-12 scroll-reveal">
+                <h3 class="text-xl font-semibold mb-6 text-blue-800">教学成果</h3>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-medium mb-4">高考成绩</h4>
+                            <div class="h-64">
+                                <canvas id="gaokaoChart"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-medium mb-4">素质教育成果</h4>
+                            <div class="h-64">
+                                <canvas id="qualityChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <h4 class="font-medium mb-2">近年荣誉：</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                            <div class="bg-blue-50 p-3 rounded-lg text-center">
+                                <p class="text-blue-800 font-medium">北京市教育科研先进学校</p>
+                            </div>
+                            <div class="bg-blue-50 p-3 rounded-lg text-center">
+                                <p class="text-blue-800 font-medium">海淀区国家基础课程改革先进学校</p>
+                            </div>
+                            <div class="bg-blue-50 p-3 rounded-lg text-center">
+                                <p class="text-blue-800 font-medium">海淀区课改基地校</p>
+                            </div>
+                            <div class="bg-blue-50 p-3 rounded-lg text-center">
+                                <p class="text-blue-800 font-medium">北京市科技后备人才培养基地</p>
+                            </div>
+                            <div class="bg-blue-50 p-3 rounded-lg text-center">
+                                <p class="text-blue-800 font-medium">北京市奥林匹克体育后备人才培养基地</p>
+                            </div>
+                            <div class="bg-blue-50 p-3 rounded-lg text-center">
+                                <p class="text-blue-800 font-medium">北京市"翱翔计划"基地校</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 学生活动 -->
+            <div class="scroll-reveal">
+                <h3 class="text-xl font-semibold mb-6 text-blue-800">学生活动</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden card">
+                        <img src="https://p26-doubao-search-sign.byteimg.com/labis/d9b19d517cd400076693e9b01df3c0b9~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1791294657&x-signature=ckFdQoWyariQwRorfffA695j5yo%3D" alt="学生活动" class="w-full h-40 object-cover">
+                        <div class="p-4">
+                            <h4 class="font-medium">元旦文艺汇演</h4>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden card">
+                        <img src="https://p3-doubao-search-sign.byteimg.com/labis/5e9af5830fdb56904b88173ad204eadc~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1791294657&x-signature=km8ZSZTZDDw%2BDiOn2n3iehCutGw%3D" alt="学生活动" class="w-full h-40 object-cover">
+                        <div class="p-4">
+                            <h4 class="font-medium">五四表彰大会</h4>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden card">
+                        <img src="https://p11-doubao-search-sign.byteimg.com/labis/60545518947e1a4eda0d756b43712c3b~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1791294657&x-signature=VljqGITsg%2Foip3y2FL5GWGUEnwQ%3D" alt="学生活动" class="w-full h-40 object-cover">
+                        <div class="p-4">
+                            <h4 class="font-medium">广播操比赛</h4>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden card">
+                        <img src="https://p3-doubao-search-sign.byteimg.com/labis/bceda747a57ceb07032cc25485a6e11a~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1791294657&x-signature=nVaqwzLYV0erTWEZ8vOIEB8PCKM%3D" alt="学生活动" class="w-full h-40 object-cover">
+                        <div class="p-4">
+                            <h4 class="font-medium">校园晨景</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI校园助手 -->
+    <section id="ai-assistant" class="py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-12 section-title">AI校园助手</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="md:col-span-2 scroll-reveal">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-blue-800">智能问答</h3>
+                        <div class="chat-container mb-4" id="chat-container">
+                            <div class="chat-message bot-message">
+                                <p>你好！我是北京市第二十中学的AI校园助手，有什么可以帮您的吗？</p>
+                            </div>
+                            <div class="chat-message bot-message">
+                                <p>您可以询问关于学校历史、课程设置、招生信息、校园活动等问题。</p>
+                            </div>
+                        </div>
+                        <div class="flex">
+                            <input type="text" id="chat-input" class="flex-1 border border-gray-300 rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="请输入您的问题...">
+                            <button id="send-btn" class="bg-blue-800 hover:bg-blue-700 text-white px-4 py-2 rounded-r-lg transition duration-300">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="scroll-reveal">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h3 class="text-xl font-semibold mb-4 text-blue-800">热门问题</h3>
+                        <ul class="space-y-3">
+                            <li>
+                                <button class="w-full text-left p-2 hover:bg-gray-100 rounded-lg transition duration-300 quick-question">
+                                    学校的招生政策是什么？
+                                </button>
+                            </li>
+                            <li>
+                                <button class="w-full text-left p-2 hover:bg-gray-100 rounded-lg transition duration-300 quick-question">
+                                    学校有哪些特色课程？
+                                </button>
+                            </li>
+                            <li>
+                                <button class="w-full text-left p-2 hover:bg-gray-100 rounded-lg transition duration-300 quick-question">
+                                    学校的师资力量如何？
+                                </button>
+                            </li>
+                            <li>
+                                <button class="w-full text-left p-2 hover:bg-gray-100 rounded-lg transition duration-300 quick-question">
+                                    学校的历史沿革是怎样的？
+                                </button>
+                            </li>
+                            <li>
+                                <button class="w-full text-left p-2 hover:bg-gray-100 rounded-lg transition duration-300 quick-question">
+                                    学校有哪些社团活动？
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-blue-800">联系方式</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-map-marker-alt text-blue-800 mt-1 mr-3"></i>
+                                <span>地址：北京市海淀区清河小营西路11号</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-phone-alt text-blue-800 mt-1 mr-3"></i>
+                                <span>电话：010-12345678</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-envelope text-blue-800 mt-1 mr-3"></i>
+                                <span>邮箱：info@bj20hs.cn</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-globe text-blue-800 mt-1 mr-3"></i>
+                                <span>网站：<a href="https://www.bj20hs.cn" class="text-blue-800 hover:underline">https://www.bj20hs.cn</a></span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-clock text-blue-800 mt-1 mr-3"></i>
+                                <span>邮编：100085</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">北京市第二十中学</h3>
+                    <p class="text-gray-400">扬五彩青春，做中国脊梁</p>
+                    <div class="flex space-x-4 mt-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                            <i class="fab fa-weixin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                            <i class="fab fa-weibo text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                            <i class="fab fa-youtube text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">快速链接</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-400 hover:text-white transition duration-300">首页</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-white transition duration-300">学校概况</a></li>
+                        <li><a href="#news" class="text-gray-400 hover:text-white transition duration-300">新闻动态</a></li>
+                        <li><a href="#education" class="text-gray-400 hover:text-white transition duration-300">教育教学</a></li>
+                        <li><a href="#ai-assistant" class="text-gray-400 hover:text-white transition duration-300">智能助手</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">校区信息</h3>
+                    <ul class="space-y-2">
+                        <li class="text-gray-400">小营校区（完全中学）</li>
+                        <li class="text-gray-400">新都校区（初中校）</li>
+                        <li class="text-gray-400">永泰校区（九年一贯制学校）</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">联系我们</h3>
+                    <ul class="space-y-2">
+                        <li class="text-gray-400 flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-2"></i>
+                            <span>北京市海淀区清河小营西路11号</span>
+                        </li>
+                        <li class="text-gray-400 flex items-start">
+                            <i class="fas fa-phone-alt mt-1 mr-2"></i>
+                            <span>010-12345678</span>
+                        </li>
+                        <li class="text-gray-400 flex items-start">
+                            <i class="fas fa-envelope mt-1 mr-2"></i>
+                            <span>info@bj20hs.cn</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500">
+                <p>&copy; 2024 北京市第二十中学 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 返回顶部按钮 -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-blue-800 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg opacity-0 invisible transition-all duration-300">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const nav = document.getElementById('main-nav');
+            const backToTop = document.getElementById('back-to-top');
+            
+            if (window.scrollY > 50) {
+                nav.classList.add('py-2');
+                nav.classList.remove('py-3');
+                backToTop.classList.remove('opacity-0', 'invisible');
+                backToTop.classList.add('opacity-100', 'visible');
+            } else {
+                nav.classList.add('py-3');
+                nav.classList.remove('py-2');
+                backToTop.classList.add('opacity-0', 'invisible');
+                backToTop.classList.remove('opacity-100', 'visible');
+            }
+        });
+        
+        // 移动端菜单切换
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // 如果是移动端，点击后关闭菜单
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+        
+        // 返回顶部按钮
+        document.getElementById('back-to-top').addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 滚动显示动画
+        function checkScroll() {
+            const elements = document.querySelectorAll('.scroll-reveal');
+            
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (elementTop < windowHeight * 0.85) {
+                    element.classList.add('active');
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', checkScroll);
+        window.addEventListener('load', checkScroll);
+        
+        // 导航链接激活状态
+        function setActiveNav() {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            let currentSection = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                
+                if (window.scrollY >= sectionTop - 100 && window.scrollY < sectionTop + sectionHeight - 100) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active-nav');
+                if (link.getAttribute('href') === `#${currentSection}`) {
+                    link.classList.add('active-nav');
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', setActiveNav);
+        window.addEventListener('load', setActiveNav);
+        
+        // 3D校园导览
+        function initCampus3D() {
+            // 创建场景
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf0f9ff);
+            
+            // 创建相机
+            const camera = new THREE.PerspectiveCamera(75, document.getElementById('campus-3d').offsetWidth / document.getElementById('campus-3d').offsetHeight, 0.1, 1000);
+            camera.position.set(0, 5, 10);
+            
+            // 创建渲染器
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(document.getElementById('campus-3d').offsetWidth, document.getElementById('campus-3d').offsetHeight);
+            document.getElementById('campus-3d').appendChild(renderer.domElement);
+            
+            // 添加灯光
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 10, 7);
+            scene.add(directionalLight);
+            
+            // 创建地面
+            const groundGeometry = new THREE.PlaneGeometry(30, 30);
+            const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x7cbe7c });
+            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+            ground.rotation.x = -Math.PI / 2;
+            ground.position.y = -0.5;
+            scene.add(ground);
+            
+            // 创建教学楼
+            function createBuilding(width, height, depth, x, z, color) {
+                const geometry = new THREE.BoxGeometry(width, height, depth);
+                const material = new THREE.MeshStandardMaterial({ color: color });
+                const building = new THREE.Mesh(geometry, material);
+                building.position.set(x, height / 2, z);
+                scene.add(building);
+                return building;
+            }
+            
+            // 主教学楼
+            const mainBuilding = createBuilding(10, 3, 4, 0, 0, 0xffffff);
+            
+            // 实验楼
+            const labBuilding = createBuilding(6, 2.5, 4, -7, 3, 0xf0f0f0);
+            
+            // 图书馆
+            const library = createBuilding(5, 2, 5, 7, 3, 0xe8e8e8);
+            
+            // 创建操场
+            const fieldGeometry = new THREE.PlaneGeometry(12, 8);
+            const fieldMaterial = new THREE.MeshStandardMaterial({ color: 0x228b22 });
+            const field = new THREE.Mesh(fieldGeometry, fieldMaterial);
+            field.rotation.x = -Math.PI / 2;
+            field.position.set(0, -0.49, -8);
+            scene.add(field);
+            
+            // 创建跑道
+            const trackGeometry = new THREE.RingGeometry(4.5, 5.5, 32);
+            const trackMaterial = new THREE.MeshStandardMaterial({ color: 0xd2691e });
+            const track = new THREE.Mesh(trackGeometry, trackMaterial);
+            track.rotation.x = -Math.PI / 2;
+            track.position.set(0, -0.48, -8);
+            scene.add(track);
+            
+            // 创建树木
+            function createTree(x, z) {
+                const trunkGeometry = new THREE.CylinderGeometry(0.2, 0.2, 1, 8);
+                const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
+                const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+                trunk.position.set(x, 0.5, z);
+                
+                const leavesGeometry = new THREE.ConeGeometry(1, 2, 8);
+                const leavesMaterial = new THREE.MeshStandardMaterial({ color: 0x228b22 });
+                const leaves = new THREE.Mesh(leavesGeometry, leavesMaterial);
+                leaves.position.set(x, 2, z);
+                
+                scene.add(trunk);
+                scene.add(leaves);
+            }
+            
+            // 添加多棵树
+            createTree(-10, 10);
+            createTree(-10, -10);
+            createTree(10, 10);
+            createTree(10, -10);
+            createTree(-15, 0);
+            createTree(15, 0);
+            
+            // 添加动画
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // 旋转场景
+                scene.rotation.y += 0.005;
+                
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            
+            // 响应窗口大小变化
+            window.addEventListener('resize', function() {
+                const width = document.getElementById('campus-3d').offsetWidth;
+                const height = document.getElementById('campus-3d').offsetHeight;
+                
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                
+                renderer.setSize(width, height);
+            });
+        }
+        
+        // 页面加载完成后初始化3D场景
+        window.addEventListener('load', initCampus3D);
+        
+        // 图表初始化
+        function initCharts() {
+            // 高考成绩图表
+            const gaokaoCtx = document.getElementById('gaokaoChart').getContext('2d');
+            const gaokaoChart = new Chart(gaokaoCtx, {
+                type: 'line',
+                data: {
+                    labels: ['2018', '2019', '2020', '2021', '2022', '2023'],
+                    datasets: [{
+                        label: '本科上线率',
+                        data: [92, 94, 95, 96, 97, 98],
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 2,
+                        tension: 0.3
+                    }, {
+                        label: '重点本科上线率',
+                        data: [75, 78, 80, 82, 85, 88],
+                        backgroundColor: 'rgba(249, 115, 22, 0.2)',
+                        borderColor: 'rgba(249, 115, 22, 1)',
+                        borderWidth: 2,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 70,
+                            max: 100
+                        }
+                    }
+                }
+            });
+            
+            // 素质教育成果图表
+            const qualityCtx = document.getElementById('qualityChart').getContext('2d');
+            const qualityChart = new Chart(qualityCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['科技竞赛', '艺术活动', '体育比赛', '创新实践', '学科竞赛', '社会实践'],
+                    datasets: [{
+                        label: '获奖数量',
+                        data: [65, 78, 80, 72, 85, 70],
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(59, 130, 246, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+        
+        // 页面加载完成后初始化图表
+        window.addEventListener('load', initCharts);
+        
+        // AI助手功能
+        const chatContainer = document.getElementById('chat-container');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        
+        // 预设问答对
+        const qaDatabase = {
+            '学校的招生政策是什么？': '北京市第二十中学招生政策严格按照北京市和海淀区教委的统一规定执行。我校面向海淀区招收初中和高中学生，同时也招收部分特长生。具体招生计划、录取标准和报名方式，请关注学校官网发布的年度招生简章。',
+            '学校有哪些特色课程？': '我校形成了德育、体育、艺术教育、科技教育、心理健康教育等特色课程群。科技类特色课程包括人工智能、遥感科学、新能源、半导体等前沿领域；体育类包括田径、健美操、体育舞蹈等；艺术类包括器乐、声乐、舞蹈、戏剧、美术等。',
+            '学校的师资力量如何？': '学校有一支事业心责任感强、德才兼备、爱岗敬业的教师队伍。其中特级教师8人，市、区级学科带头人和骨干教师70余人。教师全部是大学本科以上学历，其中研究生和研究生课程班结业的占任课教师的62%。',
+            '学校的历史沿革是怎样的？': '北京市第二十中学创建于1951年，原名"清河中学班"。1952年被正式命名为"北京市第二十中学"。1958年开始招收高中生，成为完全中学。2004年被评为北京市示范高中校。目前一校三址，包括小营、新都、永泰校区。',
+            '学校有哪些社团活动？': '学校设有科技类社团12个，涵盖机器人、人工智能、航天科技、工程设计等多个领域。艺术中心设立了"三团两社"，即管乐团、合唱团、舞蹈团、书画社、戏剧社。体育方面有田径队、健美操、体育舞蹈、跳绳、足球、篮球、街舞社等。',
+            '学校的地址在哪里？': '学校总校区位于北京市海淀区清河小营西路11号。此外还有新都校区和永泰校区，分别位于海淀区西三旗新都环岛北侧和海淀区永泰东里49号。',
+            '学校的联系方式是什么？': '学校联系电话：010-12345678，邮箱：info@bj20hs.cn，邮编：100085。您也可以访问学校官网https://www.bj20hs.cn获取更多信息。',
+            '学校的办学理念是什么？': '学校坚持立德树人，大力推进素质教育。以"德育为首，全面发展，追求一流，办有特色"为办学指导思想，以"做中国脊梁"为教育理念，着力于培养"志存高远，品学兼优，身心和谐，能力卓越"的青年。',
+            '学校的校训是什么？': '学校校训是"勤奋、求实、向上"。',
+            '学校有哪些荣誉称号？': '学校先后被评为首都文明单位、北京市德育先进集体、北京市科技、艺术教育示范校、北京市体育（田径）传统校、北京市"翱翔计划"基地校、北京市科技后备人才培养基地、北京市奥林匹克体育后备人才培养基地等。'
+        };
+        
+        // 添加用户消息
+        function addUserMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message user-message';
+            messageDiv.innerHTML = `<p>${message}</p>`;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // 添加AI回复
+        function addBotMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message bot-message';
+            messageDiv.innerHTML = `<p>${message}</p>`;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // 添加正在输入指示器
+        function addTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'chat-message bot-message typing-indicator-container';
+            typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
+            chatContainer.appendChild(typingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            return typingDiv;
+        }
+        
+        // 处理用户输入
+        function handleUserInput() {
+            const message = chatInput.value.trim();
+            if (message === '') return;
+            
+            addUserMessage(message);
+            chatInput.value = '';
+            
+            const typingIndicator = addTypingIndicator();
+            
+            // 模拟AI思考时间
+            setTimeout(() => {
+                chatContainer.removeChild(typingIndicator);
+                
+                // 查找匹配的回答
+                let response = '抱歉，我暂时无法回答这个问题。请尝试询问关于学校历史、课程设置、招生信息、校园活动等方面的问题。';
+                
+                // 检查是否有完全匹配的问题
+                if (qaDatabase[message]) {
+                    response = qaDatabase[message];
+                } else {
+                    // 简单的关键词匹配
+                    for (const [question, answer] of Object.entries(qaDatabase)) {
+                        if (message.includes('招生') && question.includes('招生')) {
+                            response = answer;
+                            break;
+                        } else if (message.includes('特色课程') && question.includes('特色课程')) {
+                            response = answer;
+                            break;
+                        } else if (message.includes('师资') && question.includes('师资')) {
+                            response = answer;
+                            break;
+                        } else if (message.includes('历史') && question.includes('历史')) {
+                            response = answer;
+                            break;
+                        } else if (message.includes('社团') && question.includes('社团')) {
+                            response = answer;
+                            break;
+                        } else if (message.includes('地址') && question.includes('地址')) {
+                            response = answer;
+                            break;
+                        } else if (message.includes('联系') && question.includes('联系')) {
+                            response = answer;
+                            break;
+                        } else if (message.includes('办学理念') && question.includes('办学理念')) {
+                            response = answer;
+                            break;
+                        } else if (message.includes('校训') && question.includes('校训')) {
+                            response = answer;
+                            break;
+                        } else if (message.includes('荣誉') && question.includes('荣誉')) {
+                            response = answer;
+                            break;
+                        }
+                    }
+                }
+                
+                addBotMessage(response);
+            }, 1000);
+        }
+        
+        // 发送按钮点击事件
+        sendBtn.addEventListener('click', handleUserInput);
+        
+        // 输入框回车事件
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleUserInput();
+            }
+        });
+        
+        // 快速问题点击事件
+        document.querySelectorAll('.quick-question').forEach(button => {
+            button.addEventListener('click', function() {
+                const question = this.textContent.trim();
+                chatInput.value = question;
+                handleUserInput();
+            });
+        });
+    </script>
+</body>
+</html>
