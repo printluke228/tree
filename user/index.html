@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<body>
+  <!-- 文件上传表单，action填后端接收接口地址 -->
+  <form action="/upload" method="post" enctype="multipart/form-data">
+    <!-- 文件输入框，隐藏原生样式，用自定义按钮替代 -->
+    <input type="file" id="fileInput" name="file" style="display: none;">
+    <!-- 自定义提交按钮 -->
+    <label for="fileInput" style="padding:8px 16px;background:#2563eb;color:#fff;border-radius:4px;cursor:pointer;">
+      选择文件
+    </label>
+    <!-- 提交按钮 -->
+    <button type="submit" style="margin-left:10px;padding:8px 16px;">上传文件</button>
+  </form>
+</body>
+</html>
